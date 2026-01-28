@@ -7,7 +7,6 @@ from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
 
 
-# return cora dataset as pytorch geometric Data object together with 60/20/20 split, and list of cora IDs
 
 
 def get_cora_casestudy(SEED=0):
@@ -32,14 +31,14 @@ def get_cora_casestudy(SEED=0):
     data.y = torch.tensor(data_Y).long()
     data.num_nodes = len(data_Y)
 
-    # split data - 平衡划分: 70/20/10 (平衡训练数据和验证稳定性)
+    # split data - 平衡划分: 60/20/20 (平衡训练数据和验证稳定性)
     node_id = np.arange(data.num_nodes)
     np.random.shuffle(node_id)
 
-    data.train_id = np.sort(node_id[:int(data.num_nodes * 0.70)])
+    data.train_id = np.sort(node_id[:int(data.num_nodes * 0.60)])
     data.val_id = np.sort(
-        node_id[int(data.num_nodes * 0.70):int(data.num_nodes * 0.90)])
-    data.test_id = np.sort(node_id[int(data.num_nodes * 0.90):])
+        node_id[int(data.num_nodes * 0.60):int(data.num_nodes * 0.80)])
+    data.test_id = np.sort(node_id[int(data.num_nodes * 0.80):])
 
     data.train_mask = torch.tensor(
         [x in data.train_id for x in range(data.num_nodes)])
@@ -50,7 +49,6 @@ def get_cora_casestudy(SEED=0):
 
     return data, data_citeid
 
-# credit: https://github.com/tkipf/pygcn/issues/27, xuhaiyun
 
 
 def parse_cora():
@@ -59,8 +57,7 @@ def parse_cora():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     path = os.path.join(base_dir, 'dataset', 'cora_orig', 'cora')
     
-    # Linux环境使用（需要时取消注释并注释掉上面两行）
-    # path = '/mnt/lun1/home/jd/code/ljc/dual-diffusion-graph-model/dataset/cora_orig/cora'
+    
     
     idx_features_labels = np.genfromtxt(
         "{}.content".format(path), dtype=np.dtype(str))
@@ -91,8 +88,7 @@ def get_raw_text_cora(use_text=False, seed=0):
     base_dir = os.path.dirname(os.path.abspath(__file__))
     papers_path = os.path.join(base_dir, 'dataset', 'cora_orig', 'mccallum', 'cora', 'papers')
     
-    # Linux环境使用（需要时取消注释并注释掉上面两行）
-    # papers_path = '/mnt/lun1/home/jd/code/ljc/dual-diffusion-graph-model/dataset/cora_orig/mccallum/cora/papers'
+    
     
     with open(papers_path) as f:
         lines = f.readlines()
@@ -111,8 +107,7 @@ def get_raw_text_cora(use_text=False, seed=0):
     # Windows/Linux通用: 使用相对路径（推荐）
     extractions_path = os.path.join(base_dir, 'dataset', 'cora_orig', 'mccallum', 'cora', 'extractions')
     
-    # Linux环境使用（需要时取消注释并注释掉上面一行）
-    # extractions_path = '/mnt/lun1/home/jd/code/ljc/dual-diffusion-graph-model/dataset/cora_orig/mccallum/cora/extractions'
+    
     
     text = []
     missing_files = 0
